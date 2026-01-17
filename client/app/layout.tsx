@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Amplitude } from '@/amplitude';
 import { CartProvider } from "@/context/CartContext";
+import { UIOptimizationProvider } from "@/context/UIOptimizationContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,10 +48,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Amplitude />
+        <UIOptimizationProvider>
           <CartProvider>
             {children}
           </CartProvider>
+        </UIOptimizationProvider>
       </body>
     </html>
   );
 }
+

@@ -6,10 +6,13 @@ import { products } from "@/lib/products";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { FreeShippingBar } from "@/components/shop/FreeShippingBar";
+import { useUIOptimization } from "@/context/UIOptimizationContext";
 
 export default function Home() {
     const [showIntro, setShowIntro] = useState(true)
     const [mounted, setMounted] = useState(false)
+    const { freeShippingThresholdEnabled } = useUIOptimization();
 
     useEffect(() => {
         setMounted(true)
@@ -31,6 +34,9 @@ export default function Home() {
             <Header />
             <main className="ml-16 md:ml-56 pt-16 p-6">
                 <div className="space-y-8">
+                    {/* Free Shipping Progress Bar - Only when enabled */}
+                    {freeShippingThresholdEnabled && <FreeShippingBar />}
+
                     {/* Hero Section */}
                     <section className="text-center py-8">
                         <h1 className="text-4xl font-bold mb-4">
@@ -54,3 +60,4 @@ export default function Home() {
         </div>
     );
 }
+
