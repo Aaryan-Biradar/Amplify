@@ -2,13 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // redirect / -> /dashboard
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
   // supabase session refresh
   const { supabase, response } = createClient(request);
   await supabase.auth.getUser();
@@ -17,5 +10,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/landing", "/dashboard", "/test-client"],
+  matcher: ["/landing", "/dashboard", "/test-client"],
 };
+

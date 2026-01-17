@@ -191,16 +191,14 @@ export function AmplifyParticles({
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-zinc-950 transition-opacity duration-1000 ${
-        fadeOut ? "opacity-0" : "opacity-100"
-      }`}
+      className={`fixed inset-0 z-50 bg-zinc-950 transition-opacity duration-1000 ${fadeOut ? "opacity-0" : "opacity-100"
+        }`}
     >
-      <canvas ref={canvasRef} className="w-full h-full cursor-none" />
+      <canvas ref={canvasRef} className="w-full h-full" />
       {autoFadeAfterMs === undefined && (
         <div
-          className={`absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-500 text-sm transition-opacity duration-500 ${
-            hasInteractedRef.current || fadeOut ? "opacity-0" : "animate-pulse"
-          }`}
+          className={`absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-500 text-sm transition-opacity duration-500 ${hasInteractedRef.current || fadeOut ? "opacity-0" : "animate-pulse"
+            }`}
         >
           Move your mouse to interact
         </div>

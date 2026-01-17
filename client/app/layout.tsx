@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Amplitude } from '@/amplitude';
-import { ThemeProvider } from "@/components/theme-provider";
+import Providers from './AmplitudeProvider';
+import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Amplify",
-  description: "Self-optimizing e-commerce AI that tracks analytics and evolves your store UI to maximize sales.",
-  generator: "v0.app",
+  title: "UofTHacks 13 Sticker Shop",
+  description: "Get your exclusive UofTHacks 13 stickers!",
   icons: {
     icon: [
       {
@@ -43,19 +43,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <Amplitude />
+    <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          forcedTheme="dark"
-        >
-          {children}
-        </ThemeProvider>
+        <Amplitude />
+        <Providers>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </Providers>
       </body>
     </html>
   );
