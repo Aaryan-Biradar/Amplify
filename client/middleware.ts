@@ -4,9 +4,9 @@ import { createClient } from "@/utils/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // redirect / -> /landing
+  // redirect / -> /dashboard
   if (pathname === "/") {
-    return NextResponse.redirect(new URL("/landing", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // supabase session refresh

@@ -15,7 +15,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      {showIntro && <AmplifyParticles onComplete={() => setShowIntro(false)} />}
+      {showIntro && <AmplifyParticles onComplete={() => setShowIntro(false)} autoFadeAfterMs={2000} />}
 
       <div
         className={`flex h-screen bg-background transition-opacity duration-500 ${showIntro ? "opacity-0" : "opacity-100"}`}
