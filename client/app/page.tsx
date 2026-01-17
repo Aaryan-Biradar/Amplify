@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { FreeShippingBar } from "@/components/shop/FreeShippingBar";
 import { useUIOptimization } from "@/context/UIOptimizationContext";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export default function Home() {
     const [showIntro, setShowIntro] = useState(true)
@@ -16,6 +17,7 @@ export default function Home() {
 
     useEffect(() => {
         setMounted(true)
+        amplitude.track("storefront_viewed");
     }, [])
 
     if (!mounted) {

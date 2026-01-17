@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Product } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
+import * as amplitude from "@amplitude/analytics-browser";
 
 interface ProductCardProps {
     product: Product;
@@ -17,6 +18,12 @@ export function ProductCard({ product }: ProductCardProps) {
         e.preventDefault();
         e.stopPropagation();
         addToCart(product);
+
+        amplitude.track("add_to_cart", {
+            product_id: product.id,
+            product_name: product.name,
+            price: product.price,
+        });
     };
 
     return (
