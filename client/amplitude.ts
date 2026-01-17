@@ -2,7 +2,7 @@
 "use client";
 
 import * as amplitude from "@amplitude/analytics-browser";
-import { useEffect } from "react";
+import { useEffect } from "react";  
 import { sessionReplayPlugin } from "@amplitude/plugin-session-replay-browser";
 import { Experiment } from "@amplitude/experiment-js-client";
 
