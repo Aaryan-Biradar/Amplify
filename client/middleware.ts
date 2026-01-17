@@ -1,20 +1,21 @@
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { createClient } from "@/utils/supabase/middleware";
 
-// Middleware logic
-export function middleware(request: NextRequest) {
-    const path = request.nextUrl.pathname;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-    if (path === '/') {
-        return NextResponse.redirect(new URL('/landing', request.nextUrl));
-    }
+  // redirect / -> /landing
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/landing", request.url));
+  }
+
+  // supabase session refresh
+  const { supabase, response } = createClient(request);
+  await supabase.auth.getUser();
+
+  return response;
 }
 
-// Matching paths for middleware
 export const config = {
-    matcher: [
-        '/',           
-        '/landing',
-        '/dashboard'  
-    ]
+  matcher: ["/", "/landing", "/dashboard"],
 };
