@@ -52,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
     return (
         <Link href={`/product/${product.id}`}>
-            <div className="group bg-card rounded-xl border border-border p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_20px_rgba(92,225,230,0.15)] relative">
+            <div className="group glass-card rounded-xl p-4 relative">
                 {/* Low Stock Badge */}
                 {lowStockAlertEnabled && isLowStock && (
                     <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse">

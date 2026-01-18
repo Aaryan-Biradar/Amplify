@@ -13,7 +13,7 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-16 md:w-56 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
+        <aside className="fixed left-0 top-0 h-screen w-16 md:w-56 glass-sidebar flex flex-col z-50">
             {/* Logo */}
             <div className="h-16 flex items-center justify-center md:justify-start md:px-4 border-b border-sidebar-border">
                 <div className="flex items-center gap-2">
@@ -33,8 +33,8 @@ export function Sidebar() {
                                 <Link
                                     href={item.href}
                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
-                                            ? "bg-sidebar-accent text-primary"
-                                            : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                                        ? "bg-sidebar-accent text-primary"
+                                        : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                                         }`}
                                 >
                                     <Icon className="w-5 h-5" />

@@ -17,7 +17,7 @@ export function Header() {
     } = useUIOptimization();
 
     return (
-        <header className="fixed top-0 left-16 md:left-56 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 flex items-center justify-between px-6">
+        <header className="fixed top-0 left-16 md:left-56 right-0 h-16 glass z-40 flex items-center justify-between px-6">
             <div>
                 <h1 className="text-xl font-semibold">Sticker Shop</h1>
                 <p className="text-sm text-muted-foreground">UofTHacks 13 Merch</p>
@@ -29,8 +29,8 @@ export function Header() {
                 <button
                     onClick={toggleFreeShippingThreshold}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${freeShippingThresholdEnabled
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                         }`}
                 >
                     <Truck className="w-4 h-4" />
@@ -50,8 +50,8 @@ export function Header() {
                 <button
                     onClick={toggleComboDeals}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${comboDealsEnabled
-                            ? "bg-amber-500 text-white"
-                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        ? "bg-amber-500 text-white"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                         }`}
                 >
                     <Package className="w-4 h-4" />
@@ -71,8 +71,8 @@ export function Header() {
                 <button
                     onClick={toggleLowStockAlert}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${lowStockAlertEnabled
-                            ? "bg-red-500 text-white"
-                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        ? "bg-red-500 text-white"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                         }`}
                 >
                     <AlertTriangle className="w-4 h-4" />

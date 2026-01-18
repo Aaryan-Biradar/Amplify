@@ -157,13 +157,13 @@ export function AmplifyParticles({
       const textPoints = getTextPoints(ctx, "Amplify", window.innerWidth, window.innerHeight)
       ctx.scale(dpr, dpr)
 
-      // "Ampli" = indices 0-4 (white/gray), "fy" = indices 5-6 (teal/green)
-      const whiteColors = ["#ffffff", "#f5f5f5", "#e5e5e5", "#d4d4d4", "#c4c4c4"]
-      const tealColors = ["#2dd4bf", "#14b8a6", "#0d9488", "#5eead4", "#99f6e4"]
+      // "Ampl" = indices 0-3 (blue), "ify" = indices 4-6 (green)
+      const blueColors = ["#3b82f6", "#60a5fa", "#2563eb", "#1d4ed8", "#93c5fd"]
+      const greenColors = ["#95bf47", "#a8cc6c", "#82a63d", "#b5d67a", "#6d8f32"]
 
       particlesRef.current = textPoints.map((point) => {
-        const isTeal = point.charIndex >= 5 // "f" and "y"
-        const colors = isTeal ? tealColors : whiteColors
+        const isGreen = point.charIndex >= 4 // "i", "f", "y"
+        const colors = isGreen ? greenColors : blueColors
 
         return {
           x: point.x,
@@ -226,20 +226,20 @@ export function AmplifyParticles({
         } else {
           // Continuous idle movement using layered noise for organic motion
           const time = timeRef.current
-          
+
           // Layer multiple noise frequencies for more organic movement
           const noise1X = smoothNoise(particle.noiseOffsetX + time * 0.8, particle.noiseOffsetY, 0) - 0.5
           const noise1Y = smoothNoise(particle.noiseOffsetX, particle.noiseOffsetY + time * 0.8, 100) - 0.5
           const noise2X = smoothNoise(particle.noiseOffsetX * 2 + time * 1.2, particle.noiseOffsetY * 2, 50) - 0.5
           const noise2Y = smoothNoise(particle.noiseOffsetX * 2, particle.noiseOffsetY * 2 + time * 1.2, 150) - 0.5
-          
+
           // Combine noise layers with different weights
           const combinedNoiseX = noise1X * 0.7 + noise2X * 0.3
           const combinedNoiseY = noise1Y * 0.7 + noise2Y * 0.3
-          
+
           // Stronger idle movement that keeps particles dancing
           const idleStrength = 8
-          
+
           // Calculate target position with noise offset (constrained around anchor)
           const maxDrift = 6 // Maximum pixels from anchor point
           const targetX = particle.anchorX + combinedNoiseX * maxDrift * 2
@@ -315,9 +315,8 @@ export function AmplifyParticles({
 
       {/* Subtitle */}
       <div
-        className={`absolute bottom-16 left-1/2 -translate-x-1/2 text-center transition-all duration-1000 ${
-          showSubtitle && !fadeOut ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+        className={`absolute bottom-16 left-1/2 -translate-x-1/2 text-center transition-all duration-1000 ${showSubtitle && !fadeOut ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
       >
         <p className="text-zinc-500 text-sm tracking-wide">Ecommerce that pays attention.</p>
       </div>
