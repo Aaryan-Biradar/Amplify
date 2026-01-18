@@ -1,12 +1,14 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus, Minus, ShoppingCart } from "lucide-react";
 import { getProduct } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
 import { notFound } from "next/navigation";
 import { ShopLayout } from "@/components/layout/ShopLayout";
+import * as amplitude from "@amplitude/analytics-browser";
+import { liveEventBus } from "@/lib/liveEventBus";
 
 interface ProductPageProps {
     params: Promise<{ id: string }>;
@@ -16,6 +18,22 @@ export default function ProductPage({ params }: ProductPageProps) {
     const { id } = use(params);
     const product = getProduct(id);
     const { addToCart, items, updateQuantity } = useCart();
+
+    // Track product view on page load
+    useEffect(() => {
+        if (product) {
+            amplitude.track("product_viewed", {
+                product_id: product.id,
+                product_name: product.name,
+                price: product.price,
+            });
+            liveEventBus.push("product_viewed", {
+                product_name: product.name,
+                product_id: product.id,
+                price: product.price,
+            });
+        }
+    }, [product]);
 
     if (!product) {
         notFound();

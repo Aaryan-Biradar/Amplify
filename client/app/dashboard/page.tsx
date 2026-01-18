@@ -40,8 +40,8 @@ export default function DashboardPage() {
         <Header />
         <main
           className={cn(
-            "flex-1",
-            activeTab === "profile" ? "overflow-hidden p-0" : "overflow-auto p-6"
+            "flex-1 overflow-auto",
+            activeTab === "profile" ? "p-0" : "p-6"
           )}
         >
           {activeTab === "overview" && (

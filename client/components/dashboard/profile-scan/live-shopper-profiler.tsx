@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { AnimatedRadarChart } from "./animated-radar-chart"
 import { Activity, Zap, Clock, MousePointer, ChevronRight } from "lucide-react"
+import { LiveEventsNarration } from "./live-events-narration"
 
 interface ShopperProfile {
   type: string
@@ -88,8 +89,7 @@ export function LiveShopperProfiler() {
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0)
   const [isMorphing, setIsMorphing] = useState(false)
   const [showDetails, setShowDetails] = useState(true)
-  const [inputValue, setInputValue] = useState("")
-  const intervalRef = useRef<NodeJS.Timeout>()
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const currentProfile = SHOPPER_PROFILES[currentProfileIndex]
 
@@ -119,7 +119,7 @@ export function LiveShopperProfiler() {
   }
 
   return (
-    <div className="w-full h-full bg-black relative overflow-hidden">
+    <div className="w-full min-h-full bg-black relative overflow-y-auto">
       {/* Subtle grid background */}
       <div
         className="absolute inset-0 opacity-[0.03]"
@@ -148,9 +148,8 @@ export function LiveShopperProfiler() {
             {SHOPPER_PROFILES.map((_, i) => (
               <div
                 key={i}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                  i === currentProfileIndex ? "bg-cyan-400" : "bg-zinc-700"
-                }`}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === currentProfileIndex ? "bg-cyan-400" : "bg-zinc-700"
+                  }`}
               />
             ))}
           </div>
@@ -369,22 +368,9 @@ export function LiveShopperProfiler() {
             </div>
           </div>
 
-          {/* Bottom Center - Command Input */}
-          <div className="col-span-6 row-span-1 flex items-center justify-center">
-            <div className="w-full max-w-md">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask why this shopper looks this way..."
-                  className="w-full bg-zinc-900/60 backdrop-blur border border-zinc-800/50 rounded-lg px-4 py-2.5 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-800/50 focus:ring-1 focus:ring-cyan-800/30 font-mono"
-                />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-[10px] font-mono text-cyan-400 hover:text-cyan-300 uppercase tracking-wider transition-colors">
-                  Focus Profile
-                </button>
-              </div>
-            </div>
+          {/* Bottom Center - AI Narration Chat */}
+          <div className="col-span-6 row-span-50">
+            <LiveEventsNarration />
           </div>
         </div>
       </div>

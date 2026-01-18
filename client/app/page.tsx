@@ -9,22 +9,31 @@ import { Header } from "@/components/layout/Header";
 import { FreeShippingBar } from "@/components/shop/FreeShippingBar";
 import { useUIOptimization } from "@/context/UIOptimizationContext";
 
+
+// Global flag to track if intro has been shown in this session (resets on refresh)
+let hasShownIntro = false;
+
 export default function Home() {
-    const [showIntro, setShowIntro] = useState(true)
-    const [mounted, setMounted] = useState(false)
+    const [showIntro, setShowIntro] = useState(!hasShownIntro);
+    const [mounted, setMounted] = useState(false);
     const { freeShippingThresholdEnabled } = useUIOptimization();
 
     useEffect(() => {
-        setMounted(true)
-    }, [])
+        setMounted(true);
+    }, []);
+
+    const handleIntroComplete = () => {
+        hasShownIntro = true;
+        setShowIntro(false);
+    };
 
     if (!mounted) {
-        return null
+        return null;
     }
 
     // Show Amplify intro animation first (requires mouse interaction)
     if (showIntro) {
-        return <AmplifyParticles onComplete={() => setShowIntro(false)} />
+        return <AmplifyParticles onComplete={handleIntroComplete} />;
     }
 
     // After intro completes, show the storefront

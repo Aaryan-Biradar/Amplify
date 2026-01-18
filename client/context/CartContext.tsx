@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Product } from "@/lib/products";
 import * as amplitude from "@amplitude/analytics-browser";
+import { liveEventBus } from "@/lib/liveEventBus";
 
 export interface CartItem {
     product: Product;
@@ -34,18 +35,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         : item
                 );
             }
-            
+
+            // Track to Amplitude AND our live event bus
             amplitude.track("add_to_cart", {
                 product_id: product.id,
                 product_name: product.name,
                 price: product.price,
             });
+            liveEventBus.push("add_to_cart", { product_name: product.name, price: product.price });
+
             return [...prev, { product, quantity: 1 }];
         });
     };
 
     const removeFromCart = (productId: string) => {
-        amplitude.track("remove_from_cart");
+        const item = items.find(i => i.product.id === productId);
+        amplitude.track("remove_from_cart", {
+            product_name: item?.product.name,
+            product_id: productId
+        });
+        liveEventBus.push("remove_from_cart", {
+            product_name: item?.product.name || 'item',
+            product_id: productId
+        });
         setItems((prev) => prev.filter((item) => item.product.id !== productId));
     };
 
@@ -54,6 +66,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
             removeFromCart(productId);
             return;
         }
+
+        const item = items.find(i => i.product.id === productId);
+        if (item) {
+            const isIncrease = quantity > item.quantity;
+            const eventType = isIncrease ? "quantity_increased" : "quantity_decreased";
+
+            amplitude.track(eventType, {
+                product_name: item.product.name,
+                product_id: productId,
+                old_quantity: item.quantity,
+                new_quantity: quantity,
+                price: item.product.price
+            });
+            liveEventBus.push(eventType, {
+                product_name: item.product.name,
+                product_id: productId,
+                old_quantity: item.quantity,
+                new_quantity: quantity,
+                price: item.product.price
+            });
+        }
+
         setItems((prev) =>
             prev.map((item) =>
                 item.product.id === productId ? { ...item, quantity } : item

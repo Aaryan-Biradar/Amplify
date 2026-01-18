@@ -5,6 +5,7 @@ import { Amplitude } from "@/amplitude"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CartProvider } from "@/context/CartContext"
 import { UIOptimizationProvider } from "@/context/UIOptimizationContext"
+import { LiveEventsProvider } from "@/context/LiveEventsContext"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -32,15 +33,15 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Amplitude />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} forcedTheme="dark">
-          <UIOptimizationProvider>
-            <CartProvider>
-              {children}
-            </CartProvider>
-          </UIOptimizationProvider>
+          <LiveEventsProvider>
+            <UIOptimizationProvider>
+              <CartProvider>
+                {children}
+              </CartProvider>
+            </UIOptimizationProvider>
+          </LiveEventsProvider>
         </ThemeProvider>
       </body>
     </html>
   )
 }
-
-

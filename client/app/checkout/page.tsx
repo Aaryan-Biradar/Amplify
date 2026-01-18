@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { ShopLayout } from "@/components/layout/ShopLayout";
 import * as amplitude from "@amplitude/analytics-browser";
+import { liveEventBus } from "@/lib/liveEventBus";
 
 export default function CheckoutPage() {
     const { items, totalPrice, clearCart } = useCart();
@@ -22,6 +23,7 @@ export default function CheckoutPage() {
             total: totalCost,
             count: items.length
         });
+        liveEventBus.push("checkout_started", { total: totalCost, count: items.length });
 
         const handleExit = () => {
             const durationMs = Date.now() - enterTime;
@@ -29,8 +31,9 @@ export default function CheckoutPage() {
             amplitude.track("checkout_exit", {
                 duration_ms: durationMs,
             });
+            liveEventBus.push("checkout_exit", { duration_ms: durationMs });
         };
-            
+
         window.addEventListener("beforeunload", handleExit);
 
         return () => {
@@ -57,9 +60,39 @@ export default function CheckoutPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsProcessing(true);
+        const startTime = Date.now();
+
         await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        // Calculate duration since component mount (approximate checktou time)
+        // Note: In a real app we'd track mount time in a ref, but here we can just presume
+        // the user has been on the page for some time.
+        // Better: Use a ref for mount time
+
         setIsProcessing(false);
         setIsComplete(true);
+
+        const revenue = totalPrice + 4.99;
+
+        // Track Purchase
+        amplitude.track("purchase", {
+            revenue: revenue,
+            total: revenue,
+            item_count: items.length,
+            products: items.map(i => ({
+                id: i.product.id,
+                name: i.product.name,
+                price: i.product.price,
+                quantity: i.quantity
+            }))
+        });
+
+        liveEventBus.push("purchase", {
+            revenue: revenue,
+            total: revenue,
+            item_count: items.length
+        });
+
         clearCart();
     };
 
@@ -129,7 +162,6 @@ export default function CheckoutPage() {
                                     placeholder="Full name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    required
                                     className="w-full px-4 py-3 bg-secondary rounded-lg border border-border focus:border-primary focus:outline-none transition-colors"
                                 />
                                 <input
@@ -138,7 +170,6 @@ export default function CheckoutPage() {
                                     placeholder="Street address"
                                     value={formData.address}
                                     onChange={handleChange}
-                                    required
                                     className="w-full px-4 py-3 bg-secondary rounded-lg border border-border focus:border-primary focus:outline-none transition-colors"
                                 />
                                 <div className="grid grid-cols-2 gap-4">
@@ -148,7 +179,6 @@ export default function CheckoutPage() {
                                         placeholder="City"
                                         value={formData.city}
                                         onChange={handleChange}
-                                        required
                                         className="w-full px-4 py-3 bg-secondary rounded-lg border border-border focus:border-primary focus:outline-none transition-colors"
                                     />
                                     <input
@@ -157,7 +187,6 @@ export default function CheckoutPage() {
                                         placeholder="ZIP Code"
                                         value={formData.zip}
                                         onChange={handleChange}
-                                        required
                                         className="w-full px-4 py-3 bg-secondary rounded-lg border border-border focus:border-primary focus:outline-none transition-colors"
                                     />
                                 </div>
