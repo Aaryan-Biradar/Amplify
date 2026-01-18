@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Product } from "@/lib/products";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export interface CartItem {
     product: Product;
@@ -33,11 +34,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         : item
                 );
             }
+            
+            amplitude.track("add_to_cart", {
+                product_id: product.id,
+                product_name: product.name,
+                price: product.price,
+            });
             return [...prev, { product, quantity: 1 }];
         });
     };
 
     const removeFromCart = (productId: string) => {
+        amplitude.track("remove_from_cart");
         setItems((prev) => prev.filter((item) => item.product.id !== productId));
     };
 

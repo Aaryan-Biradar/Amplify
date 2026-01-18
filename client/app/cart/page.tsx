@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { ShopLayout } from "@/components/layout/ShopLayout";
+import { ComboDeals } from "@/components/shop/ComboDeals";
 
 export default function CartPage() {
     const { items, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
@@ -40,7 +41,10 @@ export default function CartPage() {
                     Continue Shopping
                 </Link>
 
-                <h1 className="text-3xl font-bold mb-8">Your Cart ({totalItems} items)</h1>
+                <h1 className="text-3xl font-bold mb-6">Your Cart ({totalItems} items)</h1>
+
+                {/* Combo Deals - Only when toggle is enabled */}
+                <ComboDeals />
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-4">

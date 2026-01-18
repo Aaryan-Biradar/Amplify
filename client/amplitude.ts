@@ -32,10 +32,11 @@ export function initAmplitude() {
 
 
   amplitude.init(apiKey, undefined, {
-    autocapture: true,
-    defaultTracking: {
-      sessions: true,
+    defaultTracking: true,
+    autocapture: {
+      elementInteractions: true,
       pageViews: true,
+      sessions: true,
       formInteractions: true,
       fileDownloads: true,
     },

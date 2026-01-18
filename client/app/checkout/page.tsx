@@ -1,17 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { ShopLayout } from "@/components/layout/ShopLayout";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export default function CheckoutPage() {
     const { items, totalPrice, clearCart } = useCart();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
+
+    useEffect(() => {
+        const enterTime = Date.now();
+        const totalCost = totalPrice + 4.99;
+
+        amplitude.track("checkout_started", {
+            total: totalCost,
+            count: items.length
+        });
+
+        const handleExit = () => {
+            const durationMs = Date.now() - enterTime;
+
+            amplitude.track("checkout_exit", {
+                duration_ms: durationMs,
+            });
+        };
+            
+        window.addEventListener("beforeunload", handleExit);
+
+        return () => {
+            handleExit();
+            window.removeEventListener("beforeunload", handleExit);
+        };
+    })
 
     const [formData, setFormData] = useState({
         email: "",

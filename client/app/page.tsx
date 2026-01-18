@@ -1,18 +1,18 @@
 "use client"
 
-import { AmplifyParticles } from "@/components/intro/amplify-particles"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { AmplifyParticles } from "@/components/intro/amplify-particles"
 
 export default function HomePage() {
   const [showIntro, setShowIntro] = useState(true)
   const router = useRouter()
 
-  const handleAnimationComplete = () => {
+  const handleComplete = () => {
     setShowIntro(false)
-    // Navigate to dashboard after animation completes
     router.push("/dashboard")
   }
 
-  return <>{showIntro && <AmplifyParticles onComplete={handleAnimationComplete} />}</>
+  return <>{showIntro && <AmplifyParticles onComplete={handleComplete} autoFadeAfterMs={2000} />}</>
 }
+
