@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Truck } from "lucide-react";
+import { ShoppingCart, Truck, Package, AlertTriangle } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useUIOptimization } from "@/context/UIOptimizationContext";
 
 export function Header() {
     const { totalItems } = useCart();
-    const { freeShippingThresholdEnabled, toggleFreeShippingThreshold } = useUIOptimization();
+    const {
+        freeShippingThresholdEnabled,
+        toggleFreeShippingThreshold,
+        comboDealsEnabled,
+        toggleComboDeals,
+        lowStockAlertEnabled,
+        toggleLowStockAlert
+    } = useUIOptimization();
 
     return (
         <header className="fixed top-0 left-16 md:left-56 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 flex items-center justify-between px-6">
@@ -16,8 +23,9 @@ export function Header() {
                 <p className="text-sm text-muted-foreground">UofTHacks 13 Merch</p>
             </div>
 
-            {/* Free Shipping Threshold Toggle */}
-            <div className="flex items-center gap-4">
+            {/* UI Optimization Toggles */}
+            <div className="flex items-center gap-2">
+                {/* Free Shipping Threshold Toggle */}
                 <button
                     onClick={toggleFreeShippingThreshold}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${freeShippingThresholdEnabled
@@ -26,7 +34,7 @@ export function Header() {
                         }`}
                 >
                     <Truck className="w-4 h-4" />
-                    <span className="hidden sm:inline">Free Shipping Threshold</span>
+                    <span className="hidden xl:inline">Free Shipping</span>
                     <div
                         className={`w-8 h-4 rounded-full transition-colors ${freeShippingThresholdEnabled ? "bg-primary-foreground/30" : "bg-muted"
                             }`}
@@ -38,9 +46,51 @@ export function Header() {
                     </div>
                 </button>
 
+                {/* Combo Deals Toggle */}
+                <button
+                    onClick={toggleComboDeals}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${comboDealsEnabled
+                            ? "bg-amber-500 text-white"
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        }`}
+                >
+                    <Package className="w-4 h-4" />
+                    <span className="hidden xl:inline">Combo</span>
+                    <div
+                        className={`w-8 h-4 rounded-full transition-colors ${comboDealsEnabled ? "bg-white/30" : "bg-muted"
+                            }`}
+                    >
+                        <div
+                            className={`w-3 h-3 rounded-full bg-white shadow transition-transform mt-0.5 ${comboDealsEnabled ? "translate-x-4 ml-0.5" : "translate-x-0.5"
+                                }`}
+                        />
+                    </div>
+                </button>
+
+                {/* Low Stock Alert Toggle */}
+                <button
+                    onClick={toggleLowStockAlert}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${lowStockAlertEnabled
+                            ? "bg-red-500 text-white"
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        }`}
+                >
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="hidden xl:inline">Low Stock</span>
+                    <div
+                        className={`w-8 h-4 rounded-full transition-colors ${lowStockAlertEnabled ? "bg-white/30" : "bg-muted"
+                            }`}
+                    >
+                        <div
+                            className={`w-3 h-3 rounded-full bg-white shadow transition-transform mt-0.5 ${lowStockAlertEnabled ? "translate-x-4 ml-0.5" : "translate-x-0.5"
+                                }`}
+                        />
+                    </div>
+                </button>
+
                 <Link
                     href="/cart"
-                    className="relative p-2 rounded-lg hover:bg-secondary transition-colors"
+                    className="relative p-2 rounded-lg hover:bg-secondary transition-colors ml-2"
                 >
                     <ShoppingCart className="w-6 h-6" />
                     {totalItems > 0 && (
@@ -53,4 +103,6 @@ export function Header() {
         </header>
     );
 }
+
+
 
