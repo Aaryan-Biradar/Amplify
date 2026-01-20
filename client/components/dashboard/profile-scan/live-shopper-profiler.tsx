@@ -116,9 +116,10 @@ export function LiveShopperProfiler() {
       if (event.eventType === 'profile_update') {
         const liveProfile = event.properties as unknown as any;
 
-        // Ensure scores never decrease - take maximum of previous and new values
+        // Ensure scores never decrease - take maximum of previous and new values, but CAP at 100
         const cumulativeTraits = liveProfile.traits.map((newValue: number, index: number) => {
-          return Math.max(newValue, previousTraitsRef.current[index] || 0);
+          const maxVal = Math.max(newValue, previousTraitsRef.current[index] || 0);
+          return Math.min(maxVal, 100);
         });
 
         // Update the ref with new cumulative values

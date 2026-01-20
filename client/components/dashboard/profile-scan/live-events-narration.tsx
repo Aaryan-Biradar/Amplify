@@ -24,6 +24,17 @@ export function LiveEventsNarration() {
         }) + ' EST';
     };
 
+    // Helper to render bold text
+    const renderLine = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return parts.map((part, i) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return <span key={i} className="font-bold text-zinc-200">{part.slice(2, -2)}</span>;
+            }
+            return <span key={i}>{part}</span>;
+        });
+    };
+
     // AI Shopper Analysis State
     type ShopperState = {
         viewedProducts: Set<string>;
@@ -212,11 +223,11 @@ export function LiveEventsNarration() {
         if (type.includes('add_to_cart')) {
             const name = (props.product_name as string) || 'item';
             const price = props.price ? ` ($${Number(props.price).toFixed(2)})` : '';
-            return `[${time}] Added "${name}" to cart${price}.`;
+            return `[${time}] Added "**${name}**" to cart${price}.`;
         }
         if (type.includes('remove_from_cart')) {
             const name = (props.product_name as string) || 'item';
-            return `[${time}] Removed "${name}" from cart.`;
+            return `[${time}] Removed "**${name}**" from cart.`;
         }
 
         // Quantity changes
@@ -224,20 +235,20 @@ export function LiveEventsNarration() {
             const name = (props.product_name as string) || 'item';
             const oldQty = props.old_quantity || '?';
             const newQty = props.new_quantity || '?';
-            return `[${time}] Increased "${name}" quantity (${oldQty} → ${newQty}).`;
+            return `[${time}] Increased "**${name}**" quantity (${oldQty} → ${newQty}).`;
         }
         if (type.includes('quantity_decreased')) {
             const name = (props.product_name as string) || 'item';
             const oldQty = props.old_quantity || '?';
             const newQty = props.new_quantity || '?';
-            return `[${time}] Decreased "${name}" quantity (${oldQty} → ${newQty}).`;
+            return `[${time}] Decreased "**${name}**" quantity (${oldQty} → ${newQty}).`;
         }
 
         // Product viewed (our custom event)
         if (type.includes('product_viewed')) {
             const name = (props.product_name as string) || 'product';
             const price = props.price ? ` ($${Number(props.price).toFixed(2)})` : '';
-            return `[${time}] Viewing "${name}"${price}.`;
+            return `[${time}] Viewing "**${name}**"${price}.`;
         }
 
         // Page views
@@ -320,9 +331,9 @@ export function LiveEventsNarration() {
         if (type.includes('purchase') || type.includes('order')) {
             const total = props.total || props.revenue;
             if (total) {
-                return `[${time}] Purchase completed! ($${Number(total).toFixed(2)})`;
+                return `[${time}] **Purchase completed!** ($${Number(total).toFixed(2)})`;
             }
-            return `[${time}] Purchase completed!`;
+            return `[${time}] **Purchase completed!**`;
         }
 
         // Session events
@@ -398,7 +409,7 @@ export function LiveEventsNarration() {
                 const triggerMetric = props.triggerMetric || "Unknown";
                 const archetype = props.archetype || "Unknown";
 
-                const announcement = `🚀 UI OPTIMIZATION ACTIVATED: ${triggerMetric} metric exceeded 80% threshold, confirming ${archetype} behavior. Implementing ${uiChange} to maximize conversion.`;
+                const announcement = `🚀 **UI OPTIMIZATION ACTIVATED**: ${triggerMetric} metric exceeded 80% threshold, confirming ${archetype} behavior. Implementing **${uiChange}** to maximize conversion.`;
                 addNarration(announcement);
                 return; // Don't process this as a regular event
             }
@@ -449,69 +460,74 @@ export function LiveEventsNarration() {
     }, [isLive]);
 
     useEffect(() => {
+        // Auto-scroll on lines update
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+    }, [lines, currentLine]);
+
+    useEffect(() => {
         return () => {
             if (typingRef.current) clearInterval(typingRef.current);
         };
     }, []);
 
+    // Manual test function
+    const simulateAIEvent = () => {
+        const mockEvent = { eventType: 'MANUAL_PING', timestamp: new Date(), id: 'ping' };
+        addNarration("[System] Pinging AI Detective for link status...");
+        askAgent(mockEvent as any, shopperProfile.current).then(res => {
+            if (res) addNarration(res);
+        });
+    };
+
     return (
-        <div className="bg-zinc-900/60 backdrop-blur border border-zinc-800/50 rounded-xl overflow-hidden h-full flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800/50 flex-shrink-0">
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${isTyping ? "bg-cyan-400 animate-pulse" : "bg-emerald-400"}`} />
-                        <span className="text-xs font-medium text-zinc-200">Live Narration</span>
-                    </div>
-                    {/* Engine Status Badge */}
-                    <div className="px-2 py-0.5 rounded border border-zinc-700 bg-zinc-800/50 flex items-center gap-1.5">
-                        <div className={`w-1 h-1 rounded-full ${lines.some(l => l.includes("Heuristics")) ? "bg-amber-400" : "bg-cyan-400"}`} />
-                        <span className="text-[9px] font-mono text-zinc-400 uppercase tracking-tighter">
-                            {lines.some(l => l.includes("Heuristics") || l.includes("Local")) ? "Local Heuristics" : "AI Detective Agent"}
-                        </span>
-                    </div>
-                    <button
-                        onClick={() => {
-                            const mockEvent = { eventType: 'MANUAL_PING', timestamp: new Date(), id: 'ping' };
-                            addNarration("[System] Pinging AI Detective for link status...");
-                            askAgent(mockEvent as any, shopperProfile.current).then(res => {
-                                if (res) addNarration(res);
-                            });
-                        }}
-                        className="text-[9px] uppercase tracking-tighter text-cyan-400/50 hover:text-cyan-400 transition-colors ml-2"
-                    >
-                        Test AI
-                    </button>
+        <div className="h-full w-full bg-[#0a0a0a] font-mono text-xs flex flex-col">
+            <div className="flex items-center gap-3 px-4 py-2 border-b border-white/5 bg-[#0a0a0a]">
+                <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isLive ? "bg-emerald-400 animate-pulse" : "bg-zinc-600"}`} />
+                    <span className="font-bold text-zinc-300">Live Narration</span>
+                </div>
+                <div className="h-3 w-[1px] bg-zinc-800" />
+                <div className="flex items-center gap-2 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800">
+                    <div className="w-1 h-1 rounded-full bg-blue-400" />
+                    <span className="text-[10px] text-zinc-500 uppercase tracking-wider">AI Detective Agent</span>
                 </div>
                 <button
-                    onClick={() => setIsLive(!isLive)}
-                    className={`flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded ${isLive
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-zinc-700/50 text-zinc-400"
-                        }`}
+                    onClick={simulateAIEvent}
+                    className="ml-auto text-[10px] text-zinc-600 hover:text-cyan-400 transition-colors uppercase tracking-wider"
                 >
-                    <Radio className={`w-3 h-3 ${isLive ? "animate-pulse" : ""}`} />
-                    {isLive ? "LIVE" : "PAUSED"}
+                    Test AI
                 </button>
             </div>
 
-            {/* Narration Text Area */}
             <div
                 ref={containerRef}
-                className="flex-1 overflow-y-auto p-4 min-h-0 font-mono text-xs"
+                className="flex-1 overflow-y-auto p-4 space-y-3 scroll-smooth"
             >
-                {lines.map((line, idx) => (
-                    <div key={idx} className="text-zinc-300 leading-6">{line}</div>
+                {lines.map((line, i) => (
+                    <div key={i} className="text-zinc-400 leading-relaxed font-mono">
+                        {renderLine(line)}
+                    </div>
                 ))}
                 {currentLine && (
-                    <div className="text-zinc-300 leading-6">
-                        {currentLine}
-                        <span className="inline-block w-1.5 h-3 bg-cyan-400 animate-pulse ml-0.5 align-middle" />
+                    <div className="text-zinc-600 animate-pulse">
+                        {renderLine(currentLine)}
                     </div>
                 )}
-                {lines.length === 0 && !currentLine && (
-                    <p className="text-zinc-600 italic">Waiting for user activity...</p>
-                )}
+                {/* Invisible element to anchor scroll to bottom */}
+                <div id="scroll-anchor" className="h-px" />
+            </div>
+
+            {/* Status Bar */}
+            <div className="px-4 py-1 border-t border-zinc-800/50 bg-zinc-900/30 flex justify-between items-center text-[10px] text-zinc-600">
+                <span>{isTyping ? "AI Analyzing..." : "Ready"}</span>
+                <button
+                    onClick={() => setIsLive(!isLive)}
+                    className="hover:text-zinc-400 transition-colors"
+                >
+                    {isLive ? "PAUSE FEED" : "RESUME FEED"}
+                </button>
             </div>
         </div>
     );
