@@ -15,7 +15,7 @@ export function AnimatedRadarChart({ data, labels, isMorphing = false }: Animate
   const [morphProgress, setMorphProgress] = useState(1)
   const [glowPulse, setGlowPulse] = useState(0)
   const [isInitialRender, setIsInitialRender] = useState(true)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | null>(null)
 
   const size = 400
   const center = size / 2
