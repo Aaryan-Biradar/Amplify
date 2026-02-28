@@ -130,7 +130,7 @@ export function FeedbackLoop() {
                       borderRadius: "8px",
                       color: "oklch(0.95 0 0)",
                     }}
-                    formatter={(value: number, name: string) => [`${value}%`, name === "before" ? "Before" : "After"]}
+                    formatter={(value: number | undefined, name: string | undefined) => [`${value ?? 0}%`, name === "before" ? "Before" : "After"]}
                   />
                   <Bar dataKey="before" name="Before" fill="oklch(0.4 0 0)" radius={[0, 4, 4, 0]} barSize={16} />
                   <Bar dataKey="after" name="After" fill="oklch(0.65 0.18 270)" radius={[0, 4, 4, 0]} barSize={16} />
