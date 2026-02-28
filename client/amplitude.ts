@@ -10,9 +10,26 @@ import { Types } from "@amplitude/analytics-browser";
 
 let isInitialized = false;
 
-export const experiment = Experiment.initializeWithAmplitudeAnalytics(
-  process.env.NEXT_PUBLIC_AMPLITUDE_EXPERIMENT_DEPLOYMENT_KEY ?? ""
-);
+// Lazy-initialize experiment client (avoids `location is not defined` during SSR)
+let _experiment: ReturnType<typeof Experiment.initializeWithAmplitudeAnalytics> | null = null;
+function getExperiment() {
+  if (!_experiment && typeof window !== "undefined") {
+    _experiment = Experiment.initializeWithAmplitudeAnalytics(
+      process.env.NEXT_PUBLIC_AMPLITUDE_EXPERIMENT_DEPLOYMENT_KEY ?? ""
+    );
+  }
+  return _experiment;
+}
+
+// Proxy keeps the `experiment.variant(...)` API working without module-scope init
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const experiment: any = new Proxy({} as any, {
+  get(_target, prop) {
+    const client = getExperiment();
+    if (!client) return () => ({ value: undefined });
+    return (client as any)[prop];
+  },
+});
 
 // Create a plugin that intercepts ALL events and pushes to our live event bus
 const liveEventPlugin = (): Types.EnrichmentPlugin => {
@@ -62,7 +79,7 @@ export function initAmplitude() {
   });
 
   if (process.env.NEXT_PUBLIC_AMPLITUDE_EXPERIMENT_DEPLOYMENT_KEY) {
-    experiment.start().catch((e) => console.warn("Experiment start failed", e));
+    experiment.start().catch((e: any) => console.warn("Experiment start failed", e));
   }
 
   isInitialized = true;
