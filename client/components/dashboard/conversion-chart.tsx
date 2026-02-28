@@ -50,7 +50,7 @@ export function ConversionChart() {
                   borderRadius: "8px",
                   color: "oklch(0.95 0 0)",
                 }}
-                formatter={(value: number) => [`${value}%`]}
+                formatter={(value: number | undefined) => [`${value ?? 0}%`]}
               />
               <Legend
                 wrapperStyle={{ paddingTop: "20px" }}
